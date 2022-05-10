@@ -14,7 +14,7 @@ connection.connect((err) => {
 
 app.use(express.json());
 
-app.get("/api/movies", (req, res) => {
+app.get('/api/movies', (req, res) => {
   connection.query("SELECT * FROM movies", (err, result) => {
     if (err) {
       console.error(err);
@@ -25,7 +25,7 @@ app.get("/api/movies", (req, res) => {
   });
 });
 
-app.post("/api/movies", (req, res) => {
+app.post('/api/movies', (req, res) => {
   const { title, director, year, color, duration } = req.body;
   connection.query(
     'INSERT INTO movies(title, director, year, color, duration) VALUES (?, ?, ?, ?, ?)',
@@ -40,7 +40,24 @@ app.post("/api/movies", (req, res) => {
   );
 });
 
-app.get("/api/users", (req, res) => {
+app.put('/api/movies/:movieId', (req, res) => {
+  const { movieId } = req.params;
+  const moviePropsToUpdate = req.body;
+  connection.query(
+    'UPDATE movies SET ? WHERE id = ?',
+    [moviePropsToUpdate, movieId],
+    (err) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send('Error updating a movie');
+      } else {
+        res.status(200).send('Movie updated successfully 🎉');
+      }
+    }
+  );
+});
+
+app.get('/api/users', (req, res) => {
   connection.query("SELECT * FROM users", (err, result) => {
     if (err) {
       console.error(err);
@@ -51,7 +68,7 @@ app.get("/api/users", (req, res) => {
   });
 });
 
-app.post("/api/users", (req,res) => {
+app.post('/api/users', (req,res) => {
   const { firstname, lastname, email } = req.body;
   connection.query(
     'INSERT INTO movies.users(firstname, lastname, email) VALUES (?, ?, ?)',
@@ -64,6 +81,23 @@ app.post("/api/users", (req,res) => {
       }
     }
   )
+});
+
+app.put('/api/users/:userId', (req, res) => {
+  const { userId } = req.params;
+  const userPropsToUpdate = req.body;
+  connection.query(
+    'UPDATE users SET ? WHERE id = ?',
+    [userPropsToUpdate, userId],
+    (err) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send('Error updating a user');
+      } else {
+        res.status(200).send('User updated successfully 🎉');
+      }
+    }
+  );
 });
 
 app.listen(port, (err) => {
