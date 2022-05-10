@@ -12,6 +12,8 @@ connection.connect((err) => {
   }
 });
 
+app.use(express.json());
+
 app.get("/api/movies", (req, res) => {
   connection.query("SELECT * FROM movies", (err, result) => {
     if (err) {
@@ -21,6 +23,47 @@ app.get("/api/movies", (req, res) => {
       res.json(result);
     }
   });
+});
+
+app.post("/api/movies", (req, res) => {
+  const { title, director, year, color, duration } = req.body;
+  connection.query(
+    'INSERT INTO movies(title, director, year, color, duration) VALUES (?, ?, ?, ?, ?)',
+    [title, director, year, color, duration],
+    (err, result) => {
+      if(err) {
+        res.status(500).send('Error saving movie');
+      } else {
+        res.status(200).send('Movie successfully saved');
+      }
+    }
+  );
+});
+
+app.get("/api/users", (req, res) => {
+  connection.query("SELECT * FROM users", (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Error retrieving data from database");
+    } else {
+      res.json(result);
+    }
+  });
+});
+
+app.post("/api/users", (req,res) => {
+  const { firstname, lastname, email } = req.body;
+  connection.query(
+    'INSERT INTO movies.users(firstname, lastname, email) VALUES (?, ?, ?)',
+    [firstname, lastname, email],
+    (err, result) => {
+      if(err) {
+        res.status(500).send('Error saving user');
+      } else {
+        res.status(200).send('user successfully saved');
+      }
+    }
+  )
 });
 
 app.listen(port, (err) => {
